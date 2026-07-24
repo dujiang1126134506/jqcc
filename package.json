@@ -1,57 +1,52 @@
 {
-  "name": "projects",
+  "name": "score-miniprogram",
   "version": "1.0.0",
-  "description": "Vanilla TypeScript application with Express + Vite (HTML + CSS + TS + Node API)",
-  "scripts": {
-    "build": "bash ./scripts/build.sh",
-    "dev": "bash ./scripts/dev.sh",
-    "preinstall": "npx only-allow pnpm",
-    "lint": "eslint",
-    "lint:build": "eslint . --quiet",
-    "lint:style": "stylelint \"src/**/*.css\"",
-    "start": "bash ./scripts/start.sh",
-    "ts-check": "tsc -p tsconfig.json",
-    "validate": "pnpm dlx concurrently --group --names lint-tsc,lint-build,lint-style \"pnpm ts-check\" \"pnpm lint:build\" \"pnpm lint:style\""
+  "private": true,
+  "description": "电竞赛事积分查询小程序",
+  "templateInfo": {
+    "name": "react-ts",
+    "typescript": true,
+    "css": "sass"
   },
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "dev:weapp": "npm run build:weapp -- --watch",
+    "build:h5": "taro build --type h5",
+    "dev:h5": "npm run build:h5 -- --watch"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ],
+  "author": "",
   "dependencies": {
-    "@supabase/supabase-js": "2.95.3",
-    "@vitejs/plugin-react": "^6.0.4",
-    "dotenv": "^17.2.3",
-    "express": "^4.21.2",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.1",
-    "zustand": "^5.0.14"
+    "@babel/runtime": "^7.21.5",
+    "@tarojs/components": "4.2.1",
+    "@tarojs/helper": "4.2.1",
+    "@tarojs/plugin-framework-react": "4.2.1",
+    "@tarojs/plugin-html": "4.2.1",
+    "@tarojs/plugin-platform-h5": "4.2.1",
+    "@tarojs/plugin-platform-weapp": "4.2.1",
+    "@tarojs/react": "4.2.1",
+    "@tarojs/runtime": "4.2.1",
+    "@tarojs/shared": "4.2.1",
+    "@tarojs/taro": "4.2.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.10.5",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "autoprefixer": "^10.4.20",
-    "coze-coding-dev-sdk": "^0.7.24",
-    "esbuild": "^0.24.2",
-    "eslint": "^9",
-    "eslint-plugin-import": "^2.32.0",
-    "only-allow": "^1.2.2",
-    "postcss": "^8.4.49",
-    "stylelint": "^16.4.0",
-    "stylelint-config-standard": "^38.0.0",
-    "tailwindcss": "^3.4.17",
-    "tsup": "^8.3.5",
-    "tsx": "^4.19.2",
-    "typescript": "^5.6.0",
-    "typescript-eslint": "^8",
-    "vite": "^7.2.4"
-  },
-  "packageManager": "pnpm@9.0.0",
-  "engines": {
-    "pnpm": ">=9.0.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "esbuild": "^0.27.2",
-      "is-generator-function": "1.0.10"
-    }
+    "@babel/core": "^7.21.5",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.1",
+    "@tarojs/cli": "4.2.1",
+    "@tarojs/webpack5-runner": "4.2.1",
+    "@types/react": "^18.0.0",
+    "@types/webpack-env": "^1.13.6",
+    "babel-preset-taro": "4.2.1",
+    "sass": "^1.75.0",
+    "typescript": "^5.1.0"
   }
 }

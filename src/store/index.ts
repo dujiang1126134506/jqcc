@@ -1,40 +1,47 @@
 import { create } from 'zustand'
-import type {
-  Team,
-  Player,
-  Match,
-  Season,
-  PlayerScore,
-  UserInfo,
-} from '../types'
-import { teams as mockTeams } from '../data/mockData'
-import { players as mockPlayers } from '../data/mockData'
-import { matches as mockMatches } from '../data/mockData'
-import { seasons as mockSeasons } from '../data/mockData'
-import { playerScores as mockPlayerScores } from '../data/mockData'
-import { defaultUser } from '../data/mockData'
+import Taro from '@tarojs/taro'
+import type { UserInfo } from '../types'
+import { MOCK_USER } from '../data/mockData'
 
-interface GameState {
+interface AppState {
   user: UserInfo | null
-  teams: Team[]
-  players: Player[]
-  matches: Match[]
-  seasons: Season[]
-  playerScores: PlayerScore[]
-  setUser: (user: UserInfo) => void
-  clearUser: () => void
+  isLogin: boolean
+  login: () => Promise<void>
+  logout: () => void
 }
 
-export const useGameStore = create<GameState>((set) => ({
-  user: null,
-  teams: mockTeams,
-  players: mockPlayers,
-  matches: mockMatches,
-  seasons: mockSeasons,
-  playerScores: mockPlayerScores,
-  setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
-}))
+const STORAGE_KEY = 'taro_score_user'
 
-// 导出 defaultUser 供初始值使用
-export { defaultUser }
+// 从本地存储读取用户信息
+function loadUser(): UserInfo | null {
+  try {
+    const data = Taro.getStorageSync(STORAGE_KEY)
+    return data ? (data as UserInfo) : null
+  } catch {
+    return null
+  }
+}
+
+export const useAppStore = create<AppState>((set) => ({
+  user: loadUser(),
+  isLogin: !!loadUser(),
+
+  login: async () => {
+    // 模拟微信授权登录流程
+    try {
+      // 真实小程序中这里调用 Taro.getUserProfile 或 wx.login + code 换 session
+      await new Promise((resolve) => setTimeout(resolve, 800))
+      const user: UserInfo = MOCK_USER
+      Taro.setStorageSync(STORAGE_KEY, user)
+      set({ user, isLogin: true })
+    } catch (err) {
+      console.error('登录失败', err)
+      throw err
+    }
+  },
+
+  logout: () => {
+    Taro.removeStorageSync(STORAGE_KEY)
+    set({ user: null, isLogin: false })
+  },
+}))

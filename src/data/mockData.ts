@@ -1,323 +1,159 @@
-import type {
-  Team,
-  Player,
-  Match,
-  Season,
-  PlayerScore,
-  UserInfo,
-  RoleType,
-  MatchStage,
-  StageType,
-  MatchStatus,
-} from '../types'
-import { calcTotalScore } from '../types'
-
-// ========== 赛季数据 ==========
-export const seasons: Season[] = [
-  {
-    id: 's6',
-    name: 'S6 赛季',
-    startDate: '2025-03-01',
-    endDate: '2025-08-31',
-    status: 'ongoing',
-    isCurrent: true,
-  },
-  {
-    id: 's5',
-    name: 'S5 赛季',
-    startDate: '2024-09-01',
-    endDate: '2025-02-28',
-    status: 'finished',
-    isCurrent: false,
-  },
-  {
-    id: 's4',
-    name: 'S4 赛季',
-    startDate: '2024-03-01',
-    endDate: '2024-08-31',
-    status: 'finished',
-    isCurrent: false,
-  },
-]
+import type { Team, Player, PlayerScore, Season, Match, UserInfo } from '../types'
 
 // ========== 战队数据 ==========
-export const teams: Team[] = [
-  {
-    id: 't1',
-    name: '雷霆战队',
-    logo: '⚡',
-    color: '#1E90FF',
-    playerIds: ['p1', 'p2', 'p3', 'p4', 'p5', 'p18'],
-  },
-  {
-    id: 't2',
-    name: '烈焰雄狮',
-    logo: '🔥',
-    color: '#FF6347',
-    playerIds: ['p6', 'p7', 'p8', 'p9', 'p10', 'p19'],
-  },
-  {
-    id: 't3',
-    name: '星辰战队',
-    logo: '⭐',
-    color: '#FFD700',
-    playerIds: ['p11', 'p12', 'p13', 'p14', 'p15', 'p20'],
-  },
-  {
-    id: 't4',
-    name: '暗影刺客',
-    logo: '🗡️',
-    color: '#9370DB',
-    playerIds: ['p16', 'p17', 'p21', 'p22', 'p23', 'p24'],
-  },
+export const MOCK_TEAMS: Team[] = [
+  { id: 't1', name: '星辰战队', logo: '⭐', themeColor: '#6366f1', playerIds: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'] },
+  { id: 't2', name: '烈焰战队', logo: '🔥', themeColor: '#ef4444', playerIds: ['p7', 'p8', 'p9', 'p10', 'p11', 'p12'] },
+  { id: 't3', name: '风暴战队', logo: '⚡', themeColor: '#f59e0b', playerIds: ['p13', 'p14', 'p15', 'p16', 'p17', 'p18'] },
+  { id: 't4', name: '寒冰战队', logo: '❄️', themeColor: '#06b6d4', playerIds: ['p19', 'p20', 'p21', 'p22', 'p23', 'p24'] },
 ]
 
 // ========== 选手数据 ==========
-const avatarColors = [
-  'linear-gradient(135deg,#FFB6C1,#FF69B4)',
-  'linear-gradient(135deg,#87CEEB,#4682B4)',
-  'linear-gradient(135deg,#98FB98,#32CD32)',
-  'linear-gradient(135deg,#FFDAB9,#FFA500)',
-  'linear-gradient(135deg,#DDA0DD,#9370DB)',
-  'linear-gradient(135deg,#ADD8E6,#1E90FF)',
-  'linear-gradient(135deg,#F0E68C,#FFD700)',
-  'linear-gradient(135deg,#FFA07A,#FF4500)',
+const playerNames = [
+  '林风', '苏墨', '陈默', '叶飞', '楚云', '林溪',
+  '周扬', '吴迪', '郑浩', '孙越', '钱峰', '赵雷',
+  '王凯', '李轩', '张伟', '刘强', '黄海', '徐天',
+  '陆沉', '姜宇', '范明', '方旭', '石敢', '谭言',
 ]
 
-function makePlayer(
-  id: string,
-  name: string,
-  teamId: string,
-  role: RoleType,
-  identity: '首发' | '替补' = '首发',
-): Player {
-  const idx = parseInt(id.replace('p', '')) % avatarColors.length
+export const MOCK_PLAYERS: Player[] = MOCK_TEAMS.flatMap((team, ti) => {
+  const positions: Player['position'][] = ['上单', '打野', '中单', '射手', '辅助', '替补']
+  return positions.map((pos, i) => ({
+    id: team.playerIds[i],
+    name: playerNames[ti * 6 + i],
+    avatar: `linear-gradient(135deg, ${team.themeColor}55, ${team.themeColor}cc)`,
+    teamId: team.id,
+    position: pos,
+  }))
+})
+
+// ========== 赛季数据 ==========
+export const MOCK_SEASONS: Season[] = [
+  { id: 's4', name: 'S4 赛季', isActive: false, startDate: '2023-09-01', endDate: '2023-12-31' },
+  { id: 's5', name: 'S5 赛季', isActive: true, startDate: '2024-03-01', endDate: '2024-06-30' },
+  { id: 's6', name: 'S6 赛季', isActive: false, startDate: '2024-09-01' },
+]
+
+// ========== 赛程数据（S5 赛季） ==========
+function createMatch(id: string, stage: Match['stage'], round: number, date: string, time: string,
+  homeIdx: number, awayIdx: number, format: Match['format'], hs: number, as: number, status: Match['status']): Match {
   return {
-    id,
-    name,
-    avatar: avatarColors[idx],
-    teamId,
-    role,
-    identity,
+    id, seasonId: 's5', stage, round, date, time,
+    homeTeamId: MOCK_TEAMS[homeIdx].id,
+    awayTeamId: MOCK_TEAMS[awayIdx].id,
+    format, homeScore: hs, awayScore: as, status,
   }
 }
 
-export const players: Player[] = [
-  // 雷霆战队
-  makePlayer('p1', '雷鸣', 't1', '上单'),
-  makePlayer('p2', '风暴', 't1', '打野'),
-  makePlayer('p3', '闪电', 't1', '中单'),
-  makePlayer('p4', '霹雳', 't1', '射手'),
-  makePlayer('p5', '惊雷', 't1', '辅助'),
-  makePlayer('p18', '电闪', 't1', '打野', '替补'),
-  // 烈焰雄狮
-  makePlayer('p6', '火舞', 't2', '上单'),
-  makePlayer('p7', '炎帝', 't2', '打野'),
-  makePlayer('p8', '赤炎', 't2', '中单'),
-  makePlayer('p9', '烈焰', 't2', '射手'),
-  makePlayer('p10', '火山', 't2', '辅助'),
-  makePlayer('p19', '火花', 't2', '中单', '替补'),
-  // 星辰战队
-  makePlayer('p11', '北极星', 't3', '上单'),
-  makePlayer('p12', '流星', 't3', '打野'),
-  makePlayer('p13', '星河', 't3', '中单'),
-  makePlayer('p14', '恒星', 't3', '射手'),
-  makePlayer('p15', '月神', 't3', '辅助'),
-  makePlayer('p20', '彗星', 't3', '辅助', '替补'),
-  // 暗影刺客
-  makePlayer('p16', '暗影', 't4', '上单'),
-  makePlayer('p17', '刺客', 't4', '打野'),
-  makePlayer('p21', '夜影', 't4', '中单'),
-  makePlayer('p22', '影刃', 't4', '射手'),
-  makePlayer('p23', '暗羽', 't4', '辅助'),
-  makePlayer('p24', '幻影', 't4', '上单', '替补'),
+export const MOCK_MATCHES: Match[] = [
+  // 常规赛 第1轮
+  createMatch('m1', 'regular', 1, '2024-03-02', '19:00', 0, 1, 'BO3', 2, 1, 'finished'),
+  createMatch('m2', 'regular', 1, '2024-03-03', '19:00', 2, 3, 'BO3', 0, 2, 'finished'),
+  // 常规赛 第2轮
+  createMatch('m3', 'regular', 2, '2024-03-09', '19:00', 0, 2, 'BO3', 2, 0, 'finished'),
+  createMatch('m4', 'regular', 2, '2024-03-10', '19:00', 1, 3, 'BO3', 1, 2, 'finished'),
+  // 常规赛 第3轮
+  createMatch('m5', 'regular', 3, '2024-03-16', '19:00', 0, 3, 'BO3', 2, 1, 'finished'),
+  createMatch('m6', 'regular', 3, '2024-03-17', '19:00', 1, 2, 'BO3', 2, 0, 'finished'),
+  // 常规赛 第4轮
+  createMatch('m7', 'regular', 4, '2024-03-23', '19:00', 2, 0, 'BO3', 1, 2, 'finished'),
+  createMatch('m8', 'regular', 4, '2024-03-24', '19:00', 3, 1, 'BO3', 0, 2, 'finished'),
+  // 常规赛 第5轮
+  createMatch('m9', 'regular', 5, '2024-03-30', '19:00', 1, 0, 'BO3', 2, 1, 'finished'),
+  createMatch('m10', 'regular', 5, '2024-03-31', '19:00', 3, 2, 'BO3', 1, 2, 'finished'),
+  // 复活赛
+  createMatch('m11', 'revival', 1, '2024-04-06', '19:00', 2, 3, 'BO5', 3, 1, 'finished'),
+  // 季后赛
+  createMatch('m12', 'playoff', 1, '2024-04-13', '19:00', 0, 2, 'BO5', 3, 2, 'finished'),
+  createMatch('m13', 'playoff', 2, '2024-04-14', '19:00', 1, 0, 'BO5', 2, 3, 'finished'),
+  // 总决赛
+  createMatch('m14', 'final', 1, '2024-04-20', '19:00', 0, 1, 'BO7', 4, 3, 'finished'),
+  // 未开始的比赛（S6 季前赛，仍用 S5 id 保持数据量）
+  createMatch('m15', 'regular', 6, '2024-04-27', '19:00', 0, 3, 'BO3', 0, 0, 'upcoming'),
+  createMatch('m16', 'regular', 6, '2024-04-28', '19:00', 1, 2, 'BO3', 0, 0, 'upcoming'),
 ]
 
-// ========== 赛程与选手得分数据 ==========
-function pad(n: number) {
-  return n < 10 ? `0${n}` : `${n}`
-}
-
-function dateStr(month: number, day: number) {
-  return `2025-${pad(month)}-${pad(day)}`
-}
-
-function seededRandom(seed: number): () => number {
-  let s = seed
-  return () => {
-    s = (s * 9301 + 49297) % 233280
-    return s / 233280
+// ========== 选手得分数据 ==========
+function makeScore(playerId: string, matchId: string, stage: Match['stage'], round: number, date: string,
+  winLoseScore: number, voteScore: number, skillScore: number, penaltyScore: number, extraScore: number,
+  isMVP = false, isSVP = false, isBackpot = false): PlayerScore {
+  return {
+    playerId, seasonId: 's5', matchId, stage, round, date,
+    identity: playerId.endsWith('6') || playerId.endsWith('12') || playerId.endsWith('18') || playerId.endsWith('24') ? '替补' : '首发',
+    format: stage === 'final' ? 'BO7' : (stage === 'regular' ? 'BO3' : 'BO5'),
+    winLoseScore, voteScore, skillScore, penaltyScore, extraScore,
+    isMVP, isSVP, isBackpot,
   }
 }
 
-const STAGE_MAP: Record<MatchStage, StageType> = {
-  regular: '常规赛',
-  revival: '复活赛',
-  playoff: '季后赛',
-  final: '总决赛',
-}
+// 简化版得分数据：为每位首发选手生成有差别的总分，用于排行榜展示
+export const MOCK_PLAYER_SCORES: PlayerScore[] = [
+  // ========== m1: 星辰 2-1 烈焰 ==========
+  // 星辰胜，p3(MVP) 高分
+  makeScore('p1', 'm1', 'regular', 1, '2024-03-02', 20, 5, 12, 0, 0),
+  makeScore('p2', 'm1', 'regular', 1, '2024-03-02', 20, 3, 10, -2, 0),
+  makeScore('p3', 'm1', 'regular', 1, '2024-03-02', 20, 10, 15, 0, 5, true),
+  makeScore('p4', 'm1', 'regular', 1, '2024-03-02', 20, 8, 14, 0, 0),
+  makeScore('p5', 'm1', 'regular', 1, '2024-03-02', 20, 6, 11, 0, 0),
+  // 烈焰败，p8(SVP)
+  makeScore('p7', 'm1', 'regular', 1, '2024-03-02', -10, 2, 8, -3, 0, false, false, true),
+  makeScore('p8', 'm1', 'regular', 1, '2024-03-02', -10, 7, 13, 0, 0, false, true),
+  makeScore('p9', 'm1', 'regular', 1, '2024-03-02', -10, 1, 6, 0, 0),
+  makeScore('p10', 'm1', 'regular', 1, '2024-03-02', -10, 4, 10, 0, 0),
+  makeScore('p11', 'm1', 'regular', 1, '2024-03-02', -10, 3, 7, -1, 0),
 
-const stages: { stage: MatchStage; rounds: number; monthStart: number; dayStart: number }[] = [
-  { stage: 'regular', rounds: 10, monthStart: 3, dayStart: 1 },
-  { stage: 'revival', rounds: 3, monthStart: 6, dayStart: 5 },
-  { stage: 'playoff', rounds: 4, monthStart: 7, dayStart: 1 },
-  { stage: 'final', rounds: 2, monthStart: 8, dayStart: 10 },
+  // ========== m2: 风暴 0-2 寒冰 ==========
+  makeScore('p13', 'm2', 'regular', 1, '2024-03-03', -20, 1, 5, -5, 0, false, false, true),
+  makeScore('p14', 'm2', 'regular', 1, '2024-03-03', -20, 2, 7, 0, 0),
+  makeScore('p15', 'm2', 'regular', 1, '2024-03-03', -20, 3, 8, 0, 0),
+  makeScore('p16', 'm2', 'regular', 1, '2024-03-03', -20, 2, 6, -2, 0),
+  makeScore('p17', 'm2', 'regular', 1, '2024-03-03', -20, 1, 4, 0, 0),
+  makeScore('p19', 'm2', 'regular', 1, '2024-03-03', 20, 6, 12, 0, 0),
+  makeScore('p20', 'm2', 'regular', 1, '2024-03-03', 20, 9, 14, 0, 3, true),
+  makeScore('p21', 'm2', 'regular', 1, '2024-03-03', 20, 5, 10, 0, 0),
+  makeScore('p22', 'm2', 'regular', 1, '2024-03-03', 20, 7, 13, 0, 0),
+  makeScore('p23', 'm2', 'regular', 1, '2024-03-03', 20, 4, 9, 0, 0),
+
+  // ========== m3: 星辰 2-0 风暴 ==========
+  makeScore('p1', 'm3', 'regular', 2, '2024-03-09', 20, 4, 11, 0, 0),
+  makeScore('p2', 'm3', 'regular', 2, '2024-03-09', 20, 7, 13, 0, 2, true),
+  makeScore('p3', 'm3', 'regular', 2, '2024-03-09', 20, 6, 12, 0, 0),
+  makeScore('p4', 'm3', 'regular', 2, '2024-03-09', 20, 5, 10, 0, 0),
+  makeScore('p5', 'm3', 'regular', 2, '2024-03-09', 20, 3, 9, 0, 0),
+  makeScore('p13', 'm3', 'regular', 2, '2024-03-09', -20, 2, 6, -3, 0),
+  makeScore('p14', 'm3', 'regular', 2, '2024-03-09', -20, 1, 4, 0, 0, false, false, true),
+  makeScore('p15', 'm3', 'regular', 2, '2024-03-09', -20, 3, 7, 0, 0),
+  makeScore('p16', 'm3', 'regular', 2, '2024-03-09', -20, 2, 5, 0, 0),
+  makeScore('p17', 'm3', 'regular', 2, '2024-03-09', -20, 4, 8, 0, 0, false, true),
+
+  // ========== m4: 烈焰 1-2 寒冰 ==========
+  makeScore('p7', 'm4', 'regular', 2, '2024-03-10', -10, 3, 9, 0, 0, false, false, true),
+  makeScore('p8', 'm4', 'regular', 2, '2024-03-10', -10, 6, 12, 0, 0, false, true),
+  makeScore('p9', 'm4', 'regular', 2, '2024-03-10', -10, 2, 7, -2, 0),
+  makeScore('p10', 'm4', 'regular', 2, '2024-03-10', -10, 5, 11, 0, 0),
+  makeScore('p11', 'm4', 'regular', 2, '2024-03-10', -10, 4, 8, 0, 0),
+  makeScore('p19', 'm4', 'regular', 2, '2024-03-10', 20, 8, 14, 0, 3, true),
+  makeScore('p20', 'm4', 'regular', 2, '2024-03-10', 20, 6, 11, 0, 0),
+  makeScore('p21', 'm4', 'regular', 2, '2024-03-10', 20, 5, 10, 0, 0),
+  makeScore('p22', 'm4', 'regular', 2, '2024-03-10', 20, 7, 13, 0, 0),
+  makeScore('p23', 'm4', 'regular', 2, '2024-03-10', 20, 4, 9, 0, 0),
+
+  // ========== 总决赛 m14: 星辰 4-3 烈焰 ==========
+  makeScore('p1', 'm14', 'final', 1, '2024-04-20', 40, 15, 25, 0, 5),
+  makeScore('p2', 'm14', 'final', 1, '2024-04-20', 40, 10, 20, -3, 0),
+  makeScore('p3', 'm14', 'final', 1, '2024-04-20', 40, 20, 30, 0, 10, true),
+  makeScore('p4', 'm14', 'final', 1, '2024-04-20', 40, 18, 28, 0, 5),
+  makeScore('p5', 'm14', 'final', 1, '2024-04-20', 40, 12, 22, 0, 0),
+  makeScore('p7', 'm14', 'final', 1, '2024-04-20', -40, 5, 18, -5, 0, false, false, true),
+  makeScore('p8', 'm14', 'final', 1, '2024-04-20', -40, 18, 28, 0, 5, false, true),
+  makeScore('p9', 'm14', 'final', 1, '2024-04-20', -40, 8, 16, 0, 0),
+  makeScore('p10', 'm14', 'final', 1, '2024-04-20', -40, 12, 22, 0, 0),
+  makeScore('p11', 'm14', 'final', 1, '2024-04-20', -40, 6, 14, -2, 0),
 ]
 
-export const matches: Match[] = []
-export const playerScores: PlayerScore[] = []
-
-let scoreId = 1
-let matchId = 1
-
-function stageSeed(stage: MatchStage): number {
-  switch (stage) {
-    case 'regular':
-      return 12345
-    case 'revival':
-      return 23456
-    case 'playoff':
-      return 34567
-    case 'final':
-      return 45678
-  }
-}
-
-for (const stg of stages) {
-  const rand = seededRandom(stageSeed(stg.stage))
-  let day = stg.dayStart
-  let month = stg.monthStart
-
-  for (let round = 1; round <= stg.rounds; round++) {
-    const pairings = [
-      [
-        ['t1', 't2'],
-        ['t3', 't4'],
-      ],
-      [
-        ['t1', 't3'],
-        ['t2', 't4'],
-      ],
-      [
-        ['t1', 't4'],
-        ['t2', 't3'],
-      ],
-    ]
-    const pairIdx = (round - 1) % 3
-
-    for (const pair of pairings[pairIdx]) {
-      const [teamA, teamB] = pair
-      const teamAWin = rand() > 0.5
-      const winner = teamAWin ? teamA : teamB
-
-      // 计算比分
-      const boFormat = stg.stage === 'final' ? 7 : stg.stage === 'playoff' ? 5 : 3
-      const winnerScore = Math.ceil(boFormat / 2)
-      const loserScore = Math.floor(rand() * (winnerScore - 1))
-      const scoreA = teamAWin ? winnerScore : loserScore
-      const scoreB = teamAWin ? loserScore : winnerScore
-
-      // 判断比赛状态（最后1轮之前的都是已结束，当前轮进行中，未来轮未开始）
-      let status: MatchStatus = 'finished'
-      if (stg.stage === 'final' && round === 2) {
-        status = 'ongoing'
-      }
-
-      const m: Match = {
-        id: `m${matchId++}`,
-        seasonId: 's6',
-        stage: stg.stage,
-        round,
-        date: dateStr(month, day),
-        time: '19:00',
-        teamAId: teamA,
-        teamBId: teamB,
-        scoreA,
-        scoreB,
-        status,
-        boFormat,
-      }
-      matches.push(m)
-
-      // 生成双方选手得分
-      const allPlayersInMatch: string[] = [
-        ...teams.find((t) => t.id === teamA)!.playerIds.slice(0, 5),
-        ...teams.find((t) => t.id === teamB)!.playerIds.slice(0, 5),
-      ]
-
-      // 随机选MVP（获胜方）
-      const winnerPlayers = allPlayersInMatch.filter((pid) => {
-        const pl = players.find((p) => p.id === pid)!
-        return pl.teamId === winner
-      })
-      const mvpIdx = Math.floor(rand() * winnerPlayers.length)
-      const mvpPid = winnerPlayers[mvpIdx]
-
-      // SVP（败方）
-      const loserPlayers = allPlayersInMatch.filter((pid) => {
-        const pl = players.find((p) => p.id === pid)!
-        return pl.teamId !== winner
-      })
-      const svpIdx = Math.floor(rand() * loserPlayers.length)
-      const svpPid = loserPlayers[svpIdx]
-
-      // 背锅（败方随机一个）
-      const backpotIdx = Math.floor(rand() * loserPlayers.length)
-      const backpotPid = loserPlayers[backpotIdx]
-
-      for (const pid of allPlayersInMatch) {
-        const pl = players.find((p) => p.id === pid)!
-        const isWinner = pl.teamId === winner
-        const baseScore = isWinner ? 80 + rand() * 30 : 40 + rand() * 40
-        const voteScore = Math.floor(rand() * 20)
-        const skillScore = Math.floor(10 + rand() * 40)
-        const foulScore = rand() > 0.8 ? -Math.floor(5 + rand() * 15) : 0
-        const extraScore = rand() > 0.7 ? Math.floor(rand() * 10) : 0
-
-        const isMVP = pid === mvpPid
-        const isSVP = pid === svpPid
-        const isBackpot = pid === backpotPid
-
-        const scoreData = {
-          id: `s${scoreId++}`,
-          playerId: pid,
-          playerName: pl.name,
-          matchId: m.id,
-          seasonId: 's6',
-          teamId: pl.teamId,
-          stage: STAGE_MAP[stg.stage],
-          round,
-          date: m.date,
-          identity: pl.identity,
-          role: pl.role,
-          isMVP,
-          isSVP,
-          isBackpot,
-          winLoseScore: Math.floor(baseScore),
-          voteScore,
-          skillScore,
-          foulScore,
-          extraScore: isMVP ? extraScore + 20 : isSVP ? extraScore + 10 : extraScore,
-        }
-
-        playerScores.push({
-          ...scoreData,
-          totalScore: calcTotalScore(scoreData),
-        })
-      }
-    }
-
-    day += 3
-    if (day > 28) {
-      day = day - 28
-      month++
-    }
-  }
-}
-
-// ========== 用户数据 ==========
-export const defaultUser: UserInfo = {
+// ========== Mock 用户 ==========
+export const MOCK_USER: UserInfo = {
   id: 'u001',
-  nickname: '电竞小粉丝',
-  avatar: 'linear-gradient(135deg,#07c160,#00a854)',
+  nickName: '电竞小萌新',
+  avatarUrl: '',
 }

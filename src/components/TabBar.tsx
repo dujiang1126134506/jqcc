@@ -1,47 +1,44 @@
-import { Link, useLocation } from 'react-router-dom'
+import { View, Text } from '@tarojs/components'
+import Taro, { useRouter } from '@tarojs/taro'
+import './TabBar.scss'
 
 interface TabItem {
-  path: string
-  label: string
+  key: string
+  text: string
   icon: string
-}
-
-interface TabBarProps {
-  active?: 'home' | 'schedule' | 'profile'
+  path: string
 }
 
 const tabs: TabItem[] = [
-  { path: '/home', label: '首页', icon: '🏠' },
-  { path: '/schedule', label: '赛程', icon: '📅' },
-  { path: '/profile', label: '我的', icon: '👤' },
+  { key: 'home', text: '首页', icon: '🏆', path: '/pages/index/index' },
+  { key: 'schedule', text: '赛程', icon: '📅', path: '/pages/schedule/index' },
+  { key: 'profile', text: '我的', icon: '👤', path: '/pages/profile/index' },
 ]
 
-export default function TabBar({ active }: TabBarProps) {
-  const location = useLocation()
+export default function TabBar() {
+  const router = useRouter()
+  const currentPath = '/' + router.path
+
+  const handleTabClick = (path: string) => {
+    if (currentPath === path) return
+    Taro.redirectTo({ url: path })
+  }
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 border-t border-gray-200 bg-white safe-bottom">
-      <div className="flex">
-        {tabs.map((tab) => {
-          const isActive = active
-            ? (active === 'home' && tab.path === '/home') ||
-              (active === 'schedule' && tab.path === '/schedule') ||
-              (active === 'profile' && tab.path === '/profile')
-            : location.pathname.startsWith(tab.path) ||
-              (tab.path === '/home' && location.pathname === '/')
-          return (
-            <Link
-              key={tab.path}
-              to={tab.path}
-              className="flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors"
-              style={{ color: isActive ? '#07c160' : '#888' }}
-            >
-              <span className="text-xl mb-0.5">{tab.icon}</span>
-              <span>{tab.label}</span>
-            </Link>
-          )
-        })}
-      </div>
-    </nav>
+    <View className='tab-bar'>
+      {tabs.map((tab) => {
+        const active = currentPath === tab.path
+        return (
+          <View
+            key={tab.key}
+            className={`tab-item ${active ? 'active' : ''}`}
+            onClick={() => handleTabClick(tab.path)}
+          >
+            <Text className='tab-icon'>{tab.icon}</Text>
+            <Text className='tab-text'>{tab.text}</Text>
+          </View>
+        )
+      })}
+    </View>
   )
 }

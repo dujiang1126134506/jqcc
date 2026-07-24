@@ -1,0 +1,143 @@
+.login-page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e8f5e9 0%, #ffffff 60%);
+}
+
+.login-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 600rpx;
+  overflow: hidden;
+
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.3;
+    filter: blur(60rpx);
+  }
+
+  .bg-circle-1 {
+    width: 400rpx;
+    height: 400rpx;
+    background: #07c160;
+    top: -100rpx;
+    right: -100rpx;
+  }
+
+  .bg-circle-2 {
+    width: 300rpx;
+    height: 300rpx;
+    background: #05a64e;
+    top: 100rpx;
+    left: -80rpx;
+    opacity: 0.2;
+  }
+}
+
+.login-content {
+  position: relative;
+  z-index: 1;
+  padding: 160rpx 48rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.logo-area {
+  text-align: center;
+  margin-bottom: 120rpx;
+
+  .logo-icon {
+    font-size: 120rpx;
+    margin-bottom: 24rpx;
+  }
+
+  .app-title {
+    display: block;
+    font-size: 48rpx;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12rpx;
+  }
+
+  .app-subtitle {
+    display: block;
+    font-size: 28rpx;
+    color: #666;
+  }
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 56rpx 48rpx;
+  box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.06);
+
+  .welcome-text {
+    display: block;
+    font-size: 40rpx;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12rpx;
+  }
+
+  .desc-text {
+    display: block;
+    font-size: 26rpx;
+    color: #999;
+    margin-bottom: 56rpx;
+  }
+
+  .wechat-login-btn {
+    background: #07c160 !important;
+    color: #fff !important;
+    border: none;
+    border-radius: 999rpx;
+    font-size: 32rpx;
+    font-weight: 600;
+    height: 96rpx;
+    line-height: 96rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12rpx;
+    margin-bottom: 32rpx;
+
+    &::after {
+      border: none;
+    }
+
+    .btn-icon {
+      font-size: 36rpx;
+    }
+  }
+
+  .agreement {
+    text-align: center;
+
+    .agree-text {
+      font-size: 22rpx;
+      color: #999;
+      line-height: 1.6;
+    }
+
+    .link {
+      color: #07c160;
+    }
+  }
+}
+
+.footer {
+  margin-top: auto;
+  text-align: center;
+  padding-top: 80rpx;
+
+  .footer-text {
+    font-size: 22rpx;
+    color: #ccc;
+  }
+}

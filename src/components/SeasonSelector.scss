@@ -1,0 +1,34 @@
+.season-selector {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+  overflow-x: auto;
+  padding: 8rpx 0;
+  white-space: nowrap;
+
+  .season-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 16rpx 28rpx;
+    background: #f5f6fa;
+    border-radius: 999rpx;
+    font-size: 26rpx;
+    color: #666;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+
+    &.active {
+      background: linear-gradient(135deg, #07c160, #05a64e);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .season-tag {
+      font-size: 20rpx;
+      background: rgba(255, 255, 255, 0.25);
+      padding: 4rpx 12rpx;
+      border-radius: 999rpx;
+    }
+  }
+}
