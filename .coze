@@ -4,11 +4,9 @@ project_type = "web"
 template = "custom"
 
 [dev]
-build = ["sh", "-c", "pnpm install --no-frozen-lockfile && NODE_ENV=production npx taro build --type h5"]
-run = ["sh", "-c", "npx serve dist -l ${DEPLOY_RUN_PORT:-5000} -s"]
-deps = [ "git" ]
+build = ["sh", "-c", "pnpm install --no-frozen-lockfile && pnpm run build"]
+run = ["sh", "-c", "npx serve dist -l ${DEPLOY_RUN_PORT:-5000} -s -n"]
 
 [deploy]
-build = ["bash", "-c", "pnpm install --no-frozen-lockfile && pnpm run build:h5"]
-run = ["sh", "-c", "npx serve dist -l ${DEPLOY_RUN_PORT:-5000} -s"]
-deps = [ "git" ]
+build = ["sh", "-c", "pnpm install --no-frozen-lockfile && pnpm run build"]
+run = ["sh", "-c", "npx serve dist -l ${DEPLOY_RUN_PORT:-5000} -s -n"]

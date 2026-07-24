@@ -9,9 +9,10 @@
     "css": "sass"
   },
   "scripts": {
-    "build:weapp": "taro build --type weapp",
+    "build": "cross-env NODE_ENV=production taro build --type h5",
+    "build:weapp": "cross-env NODE_ENV=production taro build --type weapp",
     "dev:weapp": "npm run build:weapp -- --watch",
-    "build:h5": "taro build --type h5",
+    "build:h5": "cross-env NODE_ENV=production taro build --type h5",
     "dev:h5": "npm run build:h5 -- --watch"
   },
   "browserslist": [
@@ -48,6 +49,7 @@
     "@types/webpack-dev-server": "^4.7.2",
     "@types/webpack-env": "^1.13.6",
     "babel-preset-taro": "4.2.1",
+    "cross-env": "^10.1.0",
     "react-refresh": "^0.18.0",
     "sass": "^1.75.0",
     "typescript": "^5.1.0",
