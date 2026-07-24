@@ -7,7 +7,8 @@ const path = require('path');
 
 try {
   const args = process.argv.slice(2).join(' ');
-  const cmd = `npx taro build --type h5 ${args}`.trim();
+  const taroBin = path.resolve(__dirname, '../node_modules/.bin/taro');
+  const cmd = `${taroBin} build --type h5 ${args}`.trim();
   console.log(`> ${cmd}`);
   execSync(cmd, {
     stdio: 'inherit',
