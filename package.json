@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production taro build --type h5",
+    "start": "node server.js",
     "build:weapp": "cross-env NODE_ENV=production taro build --type weapp",
     "dev:weapp": "npm run build:weapp -- --watch",
     "build:h5": "cross-env NODE_ENV=production taro build --type h5",
@@ -33,6 +34,7 @@
     "@tarojs/runtime": "4.2.1",
     "@tarojs/shared": "4.2.1",
     "@tarojs/taro": "4.2.1",
+    "express": "^5.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "zustand": "^4.5.0"

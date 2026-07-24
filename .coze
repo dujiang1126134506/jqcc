@@ -1,12 +1,12 @@
 [project]
-requires = [ "nodejs-24" ]
+requires = ["nodejs-24"]
 project_type = "web"
 template = "custom"
 
 [dev]
-build = ["sh", "-c", "pnpm install --no-frozen-lockfile && pnpm run build"]
-run = ["sh", "-c", "npx serve dist -l ${DEPLOY_RUN_PORT:-5000} -s -n"]
+build = ["pnpm", "install"]
+run = ["sh", "-c", "pnpm run build && node server.js"]
 
 [deploy]
-build = ["sh", "-c", "pnpm install --no-frozen-lockfile && pnpm run build"]
-run = ["sh", "-c", "npx serve dist -l ${DEPLOY_RUN_PORT:-5000} -s -n"]
+build = ["pnpm", "run", "build"]
+run = ["node", "server.js"]
