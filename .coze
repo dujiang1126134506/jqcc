@@ -8,5 +8,5 @@ build = ["pnpm", "install"]
 run = ["sh", "-c", "pnpm run build && node server.js"]
 
 [deploy]
-build = ["pnpm", "run", "build"]
+build = ["sh", "-c", "pnpm install --no-frozen-lockfile && pnpm run build"]
 run = ["node", "server.js"]
